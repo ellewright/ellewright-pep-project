@@ -14,7 +14,7 @@ public class AccountService {
         this.accountDAO = accountDAO;
     }
 
-    public Account createAccount(Account account) {
-        return accountDAO.createAccount(account);
+    public Account createNewAccount(Account account) {
+        return accountDAO.createNewAccount(account);
     }
 }
