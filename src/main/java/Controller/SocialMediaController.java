@@ -86,7 +86,12 @@ public class SocialMediaController {
 
     private void getMessageByIdHandler(Context ctx) {
         Message message = messageService.getMessageById(Integer.parseInt(ctx.pathParam("message_id")));
-        ctx.json(message);
+
+        if (message == null) {
+            ctx.json("");
+        } else {
+            ctx.json(message);
+        }
     }
 
     private void getAllMessagesByAccountHandler(Context ctx) {
