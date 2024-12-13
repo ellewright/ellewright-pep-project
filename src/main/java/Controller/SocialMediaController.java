@@ -2,7 +2,12 @@ package Controller;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import Model.Account;
 import Model.Message;
+import Service.AccountService;
 import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -14,9 +19,11 @@ import io.javalin.http.Context;
  */
 public class SocialMediaController {
     MessageService messageService;
+    AccountService accountService;
 
     public SocialMediaController() {
         this.messageService = new MessageService();
+        this.accountService = new AccountService();
     }
 
     /**
@@ -26,9 +33,16 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
+
         app.get("example-endpoint", this::exampleHandler);
-        app.get("messages", this::getAllMessagesHandler);
-        app.get("messages/{message_id}", this::getMessageByIdHandler);
+        app.post("register", this::createNewUserHandler); // 1
+        // app.post("login", this::loginUserHandler); // 2
+        // app.post("messages", this::createNewMessage); // 3
+        app.get("messages", this::getAllMessagesHandler); // 4
+        app.get("messages/{message_id}", this::getMessageByIdHandler); // 5
+        // app.delete("messages/{message_id}", this::deleteMessageById); // 6
+        // app.patch("messages/{message_id}", this::updateMessage); // 7
+        app.get("accounts/{account_id}/messages", this::getAllMessagesByAccountHandler); // 8
 
         return app;
     }
@@ -41,13 +55,30 @@ public class SocialMediaController {
         context.json("sample text");
     }
 
+    private void createNewUserHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(ctx.body(), Account.class);
+        Account createdAccount = accountService.createAccount(account);
+
+        if (createdAccount == null) {
+            ctx.status(400);
+        } else {
+            ctx.json(mapper.writeValueAsString(createdAccount));
+        }
+    }
+
     private void getAllMessagesHandler(Context ctx) {
         List<Message> messages = messageService.getAllMessages();
         ctx.json(messages);
     }
 
     private void getMessageByIdHandler(Context ctx) {
-        Message message = messageService.getMessageById(Integer.valueOf(ctx.pathParam("message_id")));
+        Message message = messageService.getMessageById(Integer.parseInt(ctx.pathParam("message_id")));
         ctx.json(message);
+    }
+
+    private void getAllMessagesByAccountHandler(Context ctx) {
+        List<Message> messages = messageService.getAllMessagesByAccount(Integer.parseInt(ctx.pathParam("account_id")));
+        ctx.json(messages);
     }
 }
