@@ -37,7 +37,7 @@ public class SocialMediaController {
         app.get("example-endpoint", this::exampleHandler);
         app.post("register", this::createNewAccountHandler); // 1
         // app.post("login", this::loginUserHandler); // 2
-        // app.post("messages", this::createNewMessage); // 3
+        app.post("messages", this::createNewMessageHandler); // 3
         app.get("messages", this::getAllMessagesHandler); // 4
         app.get("messages/{message_id}", this::getMessageByIdHandler); // 5
         // app.delete("messages/{message_id}", this::deleteMessageById); // 6
@@ -64,6 +64,18 @@ public class SocialMediaController {
             ctx.status(400);
         } else {
             ctx.json(mapper.writeValueAsString(createdAccount));
+        }
+    }
+
+    private void createNewMessageHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(), Message.class);
+        Message createdMessage = messageService.createNewMessage(message);
+
+        if (createdMessage == null || createdMessage.getMessage_text().length() > 255 || createdMessage.getMessage_text().equals("")) {
+            ctx.status(400);
+        } else {
+            ctx.json(mapper.writeValueAsString(createdMessage));
         }
     }
 
