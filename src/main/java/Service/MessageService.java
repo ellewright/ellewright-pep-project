@@ -28,6 +28,15 @@ public class MessageService {
         return messageDAO.getMessageById(message_id);
     }
 
+    public Message updateMessage(int message_id, Message message) {
+        if (messageDAO.getMessageById(message_id) != null) {
+            messageDAO.updateMessage(message_id, message);
+            return messageDAO.getMessageById(message_id);
+        }
+
+        return null;
+    }
+
     public List<Message> getAllMessagesByAccount(int account_id) {
         return messageDAO.getAllMessagesByAccount(account_id);
     }
