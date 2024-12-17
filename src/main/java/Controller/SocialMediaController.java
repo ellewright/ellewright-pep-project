@@ -100,7 +100,7 @@ public class SocialMediaController {
         int message_id = Integer.parseInt(ctx.pathParam("message_id"));
         Message updatedMessage = messageService.updateMessage(message_id, message);
 
-        if (updatedMessage == null) {
+        if (updatedMessage == null || message.getMessage_text().equals("") || message.getMessage_text().length() > 255) {
             ctx.status(400);
         } else {
             ctx.json(mapper.writeValueAsString(updatedMessage));
