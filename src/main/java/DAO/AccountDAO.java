@@ -56,9 +56,10 @@ public class AccountDAO {
                 retrievedAccount.setPassword(resultSet.getString(3));
             }
 
-            return retrievedAccount;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+
+        return retrievedAccount;
     }
 }

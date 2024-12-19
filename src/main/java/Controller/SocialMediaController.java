@@ -72,7 +72,7 @@ public class SocialMediaController {
         Account account = mapper.readValue(ctx.body(), Account.class);
         Account retrievedAccount = accountService.loginAccount(account);
 
-        if (retrievedAccount == null) {
+        if (retrievedAccount == null || retrievedAccount.getUsername() == null) {
             ctx.status(401);
         } else {
             ctx.json(mapper.writeValueAsString(retrievedAccount));
